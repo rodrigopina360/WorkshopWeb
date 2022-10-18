@@ -1,8 +1,9 @@
-﻿namespace Workshop.Web.Data.Entities
+﻿using System;
+
+namespace Workshop.Web.Data.Entities
 {
     public interface IEntity
     {
-        int Id { get; set; }
-        string Name { get; set; }
+        public int Id { get; set; }
     }
 }

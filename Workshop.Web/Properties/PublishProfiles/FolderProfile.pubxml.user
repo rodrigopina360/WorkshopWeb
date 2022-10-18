@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>\\DESKTOP-U7TAB9Q\Workshop</_PublishTargetUrl>
+    <History>True|2022-10-12T14:27:12.5938907Z;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>Data Source=192.168.1.15%3bInitial Catalog=Workshop%3bPersist Security Info=True%3bUser ID=Pinossaur%3bPassword=Magalhaes14</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="Workshop.Web.Data.DataContext">
+      <Value>Data Source=192.168.1.15%3bInitial Catalog=Workshop%3bPersist Security Info=True%3bUser ID=Pinossaur%3bPassword=Magalhaes14</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

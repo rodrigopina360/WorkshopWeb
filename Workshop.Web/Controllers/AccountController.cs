@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
@@ -79,6 +80,8 @@ namespace Workshop.Web.Controllers
                         ModelState.AddModelError(string.Empty, "The user could not be created!");
                         return View (model);
                     }
+
+                    await _userHelper.AddUserToRoleAsync(user, "Client");
 
                     var loginViewModel = new LoginViewModel
                     {

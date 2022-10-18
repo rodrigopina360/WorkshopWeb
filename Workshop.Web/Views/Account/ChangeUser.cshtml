@@ -20,6 +20,26 @@
                 <span asp-validation-for="LastName" class="text-warning"></span>
             </div>
             <div class="form-group">
+                <label asp-for="LastName">User Type</label>
+                @if (User.IsInRole("Admin"))
+                {
+                    <label>Admin</label>
+                }
+                else if (User.IsInRole("Mechanic"))
+                {
+                    <label>Mechanic</label>
+                }
+                else if (User.IsInRole("Worker"))
+                {
+                    <label>Worker</label>
+                }
+                else if (User.IsInRole("Client"))
+                {
+                    <label>Client</label>
+                }
+                <span asp-validation-for="LastName" class="text-warning"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Update" class="btn btn-success" />
                 <a asp-action="ChangePassword" class="btn btn-primary">Change Password</a>
             </div>

@@ -8,7 +8,7 @@ namespace Workshop.Web.Data
     {
         public DbSet<Car> Cars { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-        public DbSet<UserType> UserTypes { get; set; }
+        public DbSet<Mechanic> Mechanics { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

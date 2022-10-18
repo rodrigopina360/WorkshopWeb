@@ -8,6 +8,5 @@ namespace Workshop.Web.Data.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime RegisterDate { get; set; }
-        public UserType UserType { get; set; }
     }
 }
