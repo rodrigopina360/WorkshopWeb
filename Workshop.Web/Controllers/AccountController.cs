@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using Workshop.Web.Data;
 using Workshop.Web.Data.Entities;
 using Workshop.Web.Helpers;
 using Workshop.Web.Models;
@@ -11,10 +12,12 @@ namespace Workshop.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private IUserHelper _userHelper;
-        public AccountController (IUserHelper userHelper)
+        private readonly IUserHelper _userHelper;
+        private readonly IImageHelper _imageHelper;
+        public AccountController (IUserHelper userHelper, IImageHelper imageHelper)
         {
             _userHelper = userHelper;
+            _imageHelper = imageHelper;
         }
 
         public IActionResult Login ()
@@ -47,15 +50,27 @@ namespace Workshop.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Logout ()
+        public async Task<IActionResult> Logout()
         {
             await _userHelper.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
-        
-        public IActionResult Register ()
+
+        public IActionResult Register()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Profile()
+        {
+
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
         [HttpPost]
@@ -71,7 +86,8 @@ namespace Workshop.Web.Controllers
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         Email = model.Username,
-                        UserName = model.Username
+                        UserName = model.Username,
+                        ImagePath = "~/img/users/default.png"
                     };
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);
@@ -126,11 +142,15 @@ namespace Workshop.Web.Controllers
                 {
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
+                    if(model.ImageFile != null)
+                    {
+                        user.ImagePath = await _imageHelper.UploadImageAsync(model.ImageFile, "users");
+                    }
                     var response = await _userHelper.UpdateUserAsync(user);
 
                     if (response.Succeeded)
                     {
-                        ViewBag.UserMessage = "User Updated!";
+                        return RedirectToAction("Profile");
                     }
                     else
                     {

@@ -41,6 +41,9 @@ namespace Workshop.Web
 
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<ICarRepository, CarRepository>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
+            services.AddScoped<IImageHelper, ImageHelper>();
 
             services.AddControllersWithViews();
         }

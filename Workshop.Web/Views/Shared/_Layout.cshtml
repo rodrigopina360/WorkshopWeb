@@ -24,10 +24,10 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Dashboard</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="Index">Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Cars</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Cars" asp-action="Index">Cars</a>
                             </li>
                         }
                         <li class="nav-item">
@@ -44,7 +44,7 @@
                         @if(this.User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="ChangeUser">@this.User.Identity.Name</a>
+                                <a class="nav-link text-dark" asp-area="" asp-route-id="@this.User.Identity.Name" asp-controller="Account" asp-action="Profile">@this.User.Identity.Name</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>

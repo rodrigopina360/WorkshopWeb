@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+
+<h1>Dashboard</h1>
+
+<div id="calendar">
+
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/API/Schedule/GetSchedules",
+                data: JSON.stringify({userEmail: '@User.Identity.Name'}),
+                contentType: "application/json;",
+                success: function(data){
+                    $.each(data, function (i, v){
+                        calendar.addEvent({
+                            title: v.car.brand,
+                            desctiption: v.description,
+                            start: moment(v.startDate).format(),
+                            allDay: true,
+                        });
+                    })
+                }
+            })
+
+            calendar.render();
+        });
+    </script>
+}
+
+

@@ -43,6 +43,8 @@ namespace Workshop.Web.Data
                     Email = "rodrigooliveirapina@gmail.com",
                     UserName = "rodrigooliveirapina@gmail.com",
                     PhoneNumber = "915775299",
+                    RegisterDate = DateTime.Now,
+                    ImagePath = "~/img/users/default.png"
                 };
 
                 var result = await _userHelper.AddUserAsync(user, "WorkShop2022.");
@@ -111,10 +113,10 @@ namespace Workshop.Web.Data
 
             if (!_context.Schedules.Any())
             {
-                AddSchedule("New Car", new DateTime(2022, 5, 1), cars[0]);
-                AddSchedule("Old Car", new DateTime(2022, 5, 1), cars[1]);
-                AddSchedule("Decent Car", new DateTime(2022, 5, 1), cars[2]);
-                AddSchedule("Random Car", new DateTime(2022, 5, 1), cars[3]);
+                AddSchedule("New Car", DateTime.Today, cars[0]);
+                AddSchedule("Old Car", DateTime.Today, cars[1]);
+                AddSchedule("Decent Car", DateTime.Today, cars[2]);
+                AddSchedule("Random Car", DateTime.Today, cars[3]);
             }
 
             await _context.SaveChangesAsync();
@@ -125,7 +127,8 @@ namespace Workshop.Web.Data
             _context.Schedules.Add(new Schedule
             {
                 Descripton = description,
-                Date = date,
+                StartDate = date,
+                EndDate = date.AddHours(16),
                 Car = car
             });
         }

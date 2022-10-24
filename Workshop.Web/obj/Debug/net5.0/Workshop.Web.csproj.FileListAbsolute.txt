@@ -152,3 +152,5 @@ C:\Users\Pinossaur\Desktop\Main Folder\Escola\UF5417 - Programação WEB - Servi
 C:\Users\Pinossaur\Desktop\Main Folder\Escola\UF5417 - Programação WEB - Servidor\WorkshopWeb\Workshop.Web\obj\Debug\net5.0\Razor\Views\Account\Register.cshtml.g.cs
 C:\Users\Pinossaur\Desktop\Main Folder\Escola\UF5417 - Programação WEB - Servidor\WorkshopWeb\Workshop.Web\obj\Debug\net5.0\Razor\Views\Account\ChangeUser.cshtml.g.cs
 C:\Users\Pinossaur\Desktop\Main Folder\Escola\UF5417 - Programação WEB - Servidor\WorkshopWeb\Workshop.Web\obj\Debug\net5.0\Razor\Views\Account\ChangePassword.cshtml.g.cs
+C:\Users\Pinossaur\Desktop\Main Folder\Escola\UF5417 - Programação WEB - Servidor\WorkshopWeb\Workshop.Web\obj\Debug\net5.0\Razor\Views\Account\Profile.cshtml.g.cs
+C:\Users\Pinossaur\Desktop\Main Folder\Escola\UF5417 - Programação WEB - Servidor\WorkshopWeb\Workshop.Web\obj\Debug\net5.0\Razor\Views\Schedule\Index.cshtml.g.cs

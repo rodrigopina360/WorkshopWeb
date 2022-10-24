@@ -1,0 +1,54 @@
+﻿@model Workshop.Web.Data.Entities.User
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<h2>Profile</h2>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label asp-for="FirstName"></label>
+                @Model.FirstName
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName"></label>
+                @Model.LastName
+            </div>
+            <div class="form-group">
+                <label asp-for="RegisterDate"></label>
+                @Model.RegisterDate
+            </div>
+            <div class="form-group">
+                <label>User Type </label>
+                @if (User.IsInRole("Admin"))
+                {
+                    <label>Admin</label>
+                }
+                else if (User.IsInRole("Mechanic"))
+                {
+                    <label>Mechanic</label>
+                }
+                else if (User.IsInRole("Worker"))
+                {
+                    <label>Worker</label>
+                }
+                else if (User.IsInRole("Client"))
+                {
+                    <label>Client</label>
+                }
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagePath"></label>
+                <img src="@Url.Content(Model.ImagePath)" alt="Image" style="width:300px;height:450px;max-width:100%;height:auto;" />
+            </div>
+            <div class="form-group">
+                <a asp-action="ChangeUser" class="btn btn-success">Change User</a>
+                <a asp-action="ChangePassword" class="btn btn-primary">Change Password</a>
+            </div>
+        </form>
+    </div>
+</div>
+
