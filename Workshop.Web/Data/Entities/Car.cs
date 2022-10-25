@@ -9,6 +9,7 @@ namespace Workshop.Web.Data.Entities
         public string Model { get; set; }
         public int Year { get; set; }
         public string LicensePlate { get; set; }
+        public string ImagePath { get; set; }
         public User User { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Workshop.Web.Data.Entities;
 
-namespace Workshop.Web.Models
+namespace Workshop.Web.Models.ViewModels
 {
     public class ChangeUserViewModel : User
     {

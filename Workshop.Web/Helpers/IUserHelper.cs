@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Workshop.Web.Data.Entities;
 using System.Threading.Tasks;
-using Workshop.Web.Models;
+using Workshop.Web.Models.ViewModels;
 
 namespace Workshop.Web.Helpers
 {

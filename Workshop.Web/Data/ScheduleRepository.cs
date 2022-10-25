@@ -15,40 +15,42 @@ namespace Workshop.Web.Data
             _context = context;
         }
 
-        public async Task<IEnumerable<ScheduleViewModel>> GetAllWithCars (string userId)
+        public async Task<IEnumerable<ScheduleModel>> GetAllWithCars (string userId)
         {
             return await _context.Schedules
                 .Where(s => s.Car.User.Id == userId)
-                .Select(s => new ScheduleViewModel
+                .Select(s => new ScheduleModel
                 {
                     Id = s.Id,
                     Description = s.Descripton,
                     StartDate = s.StartDate,
                     Price = s.Price,
-                    Car = new CarViewModel
+                    Car = new CarModel
                     {
                         Id = s.Car.Id,
                         Brand = s.Car.Brand,
                         Model = s.Car.Model,
+                        Year = s.Car.Year,
                     },
                 })
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ScheduleViewModel>> GetAllWithCars()
+        public async Task<IEnumerable<ScheduleModel>> GetAllWithCars()
         {
             return await _context.Schedules
-                .Select(s => new ScheduleViewModel
+                .Select(s => new ScheduleModel
                 {
                     Id = s.Id,
                     Description = s.Descripton,
                     StartDate = s.StartDate,
                     Price = s.Price,
-                    Car = new CarViewModel
+                    Car = new CarModel
                     {
                         Id = s.Car.Id,
                         Brand = s.Car.Brand,
                         Model = s.Car.Model,
+                        Year = s.Car.Year,
                     },
                 })
                 .ToListAsync();

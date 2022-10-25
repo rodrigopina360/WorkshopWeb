@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Workshop.Web.Models
+namespace Workshop.Web.Models.ViewModels
 {
     public class RegisterUserViewModel
     {

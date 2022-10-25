@@ -7,8 +7,8 @@ namespace Workshop.Web.Data
 {
     public interface IScheduleRepository : IGenericRepository<Schedule>
     {
-        Task<IEnumerable<ScheduleViewModel>> GetAllWithCars (string userId);
+        Task<IEnumerable<ScheduleModel>> GetAllWithCars (string userId);
 
-        Task<IEnumerable<ScheduleViewModel>> GetAllWithCars ();
+        Task<IEnumerable<ScheduleModel>> GetAllWithCars ();
     }
 }

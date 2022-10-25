@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Workshop.Web.Data;
 using Workshop.Web.Data.Entities;
 using Workshop.Web.Helpers;
-using Workshop.Web.Models;
+using Workshop.Web.Models.ViewModels;
 
 namespace Workshop.Web.Controllers
 {

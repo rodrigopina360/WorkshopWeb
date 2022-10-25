@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Dashboard";
 }
 
@@ -7,8 +6,25 @@
 
 <h1>Dashboard</h1>
 
-<div id="calendar">
+<div id="calendar"></div>
 
+<div id="calendarModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>        
+            </div>
+            <div class="modal-body">
+                <p id="eventDescription"></p>
+                <p id="eventPrice"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">View Car</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel Repair</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts{
@@ -16,29 +32,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
+        document.addEventListener("DOMContentLoaded", function () {
+            var calendarEl = document.getElementById("calendar");
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+                initialView: "dayGridMonth",
+                eventClick: function (data){
+                    $("#calendarModal #eventTitle").text(data.event.title);
+                    $("#calendarModal #eventDescription").empty().html("<b>Description: </b>" + data.event.extendedProps.description);
+                    $("#calendarModal #eventPrice").empty().html("<b>Price: </b>" + data.event.extendedProps.price + "€");
+                    $("#calendarModal").modal();
+                }
             });
 
             $.ajax({
                 type: "POST",
                 url: "/API/Schedule/GetSchedules",
-                data: JSON.stringify({userEmail: '@User.Identity.Name'}),
+                data: JSON.stringify({userEmail: "@User.Identity.Name"}),
                 contentType: "application/json;",
                 success: function(data){
                     $.each(data, function (i, v){
                         calendar.addEvent({
-                            title: v.car.brand,
-                            desctiption: v.description,
+                            id: v.id,
+                            title: v.car.carName,
+                            description: v.description,
+                            price: v.price,
                             start: moment(v.startDate).format(),
                             allDay: true,
                         });
-                    })
+                    })          
                 }
             })
-
             calendar.render();
         });
     </script>

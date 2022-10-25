@@ -76,6 +76,7 @@ namespace Workshop.Web.Data
                 Model = "i8",
                 Year = _random.Next(1990, DateTime.Now.Year),
                 LicensePlate = "12-AB-34",
+                ImagePath = "~/img/cars/default.png",
                 User = user
             });
             cars.Add(new Car
@@ -84,6 +85,7 @@ namespace Workshop.Web.Data
                 Model = "Civic",
                 Year = _random.Next(1990, DateTime.Now.Year),
                 LicensePlate = "21-BA-43",
+                ImagePath = "~/img/cars/default.png",
                 User = user
             });
             cars.Add(new Car
@@ -92,6 +94,7 @@ namespace Workshop.Web.Data
                 Model = "Corsa",
                 Year = _random.Next(1990, DateTime.Now.Year),
                 LicensePlate = "42-XZ-11",
+                ImagePath = "~/img/cars/default.png",
                 User = user
             });
             cars.Add(new Car
@@ -100,6 +103,7 @@ namespace Workshop.Web.Data
                 Model = "Focus",
                 Year = _random.Next(1990, DateTime.Now.Year),
                 LicensePlate = "99-FJ-61",
+                ImagePath = "~/img/cars/default.png",
                 User = user
             });
 
