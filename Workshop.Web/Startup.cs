@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Workshop.Web.Data.Entities;
 using Workshop.Web.Data;
 using Workshop.Web.Helpers;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Workshop.Web
 {
@@ -25,6 +27,8 @@ namespace Workshop.Web
         {
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredUniqueChars = 0;
@@ -32,18 +36,34 @@ namespace Workshop.Web
                 cfg.Password.RequireLowercase = false;
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequiredLength = 6;
-            }).AddEntityFrameworkStores<DataContext>();
+            })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<DataContext>();
 
             services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    };
+                });
+
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
             services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
 
             services.AddControllersWithViews();
         }

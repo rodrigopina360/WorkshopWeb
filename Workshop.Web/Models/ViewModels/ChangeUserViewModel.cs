@@ -8,5 +8,6 @@ namespace Workshop.Web.Models.ViewModels
     {
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }
+
     }
 }

@@ -33,9 +33,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Mechanics</a>
                         </li>
-                        @if(User.IsInRole("Admin")){
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Admin</a>
+                        @if(User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" href="#" role="button" data-toggle="dropdown">Admin</a>
+                                <ul class="dropdown-menu">
+                                    <h6 class="dropdown-header">Admin Options</h6>
+                                    <div class="dropdown-divider"></div>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="RegisterWorker">Add a Worker</a></li>
+                                </ul>
                             </li>
                         }
 

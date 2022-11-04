@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Threading.Tasks;
 using Workshop.Web.Data;
@@ -9,6 +11,7 @@ namespace Workshop.Web.Controllers.API
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ScheduleController: Controller
     {
         readonly IScheduleRepository _scheduleRepository;

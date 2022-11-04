@@ -1,9 +1,9 @@
 ﻿@model Workshop.Web.Models.ViewModels.ChangeUserViewModel
 @{
-    ViewData["Title"] = "ChangeUser";
+    ViewData["Title"] = "Update User";
 }
 
-<h2>ChangeUser</h2>
+<h2>Update User</h2>
 
 <div class="row">
     <div class="col-md-4 offset-md-4">
@@ -18,6 +18,11 @@
                 <label asp-for="LastName">Last Name</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-warning"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ImageFile" class="control-label"></label>
