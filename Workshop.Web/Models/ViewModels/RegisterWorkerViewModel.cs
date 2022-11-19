@@ -27,5 +27,8 @@ namespace Workshop.Web.Models.ViewModels
         [Required]
         public string Type { get; set; }
 
+        public string EnterTime { get; set; }
+        public string LeaveTime { get; set; }
+
     }
 }

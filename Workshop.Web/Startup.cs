@@ -64,6 +64,14 @@ namespace Workshop.Web
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IMechanicRepository, MechanicRepository>();
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Home/NotAuthorized";
+                options.AccessDeniedPath = "/Home/NotAuthorized";
+            });
 
             services.AddControllersWithViews();
         }

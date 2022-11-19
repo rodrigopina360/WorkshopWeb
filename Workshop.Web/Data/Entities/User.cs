@@ -14,5 +14,6 @@ namespace Workshop.Web.Data.Entities
         public DateTime RegisterDate { get; set; }
         [Display(Name = "User Image")]
         public string ImagePath { get; set; }
+        public string FullName => FirstName + " " + LastName;
     }
 }

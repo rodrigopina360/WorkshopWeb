@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Pinossaur\\Desktop\\Main Folder\\Escola\\UF5417 - Programação WEB - Servidor\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj": {}
+    "C:\\Users\\Administrator\\Desktop\\Main Folder\\Projects\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Pinossaur\\Desktop\\Main Folder\\Escola\\UF5417 - Programação WEB - Servidor\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj": {
+    "C:\\Users\\Administrator\\Desktop\\Main Folder\\Projects\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Pinossaur\\Desktop\\Main Folder\\Escola\\UF5417 - Programação WEB - Servidor\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj",
+        "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Main Folder\\Projects\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj",
         "projectName": "Workshop.Web",
-        "projectPath": "C:\\Users\\Pinossaur\\Desktop\\Main Folder\\Escola\\UF5417 - Programação WEB - Servidor\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj",
-        "packagesPath": "C:\\Users\\Pinossaur\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Pinossaur\\Desktop\\Main Folder\\Escola\\UF5417 - Programação WEB - Servidor\\WorkshopWeb\\Workshop.Web\\obj\\",
+        "projectPath": "C:\\Users\\Administrator\\Desktop\\Main Folder\\Projects\\WorkshopWeb\\Workshop.Web\\Workshop.Web.csproj",
+        "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Administrator\\Desktop\\Main Folder\\Projects\\WorkshopWeb\\Workshop.Web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Pinossaur\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

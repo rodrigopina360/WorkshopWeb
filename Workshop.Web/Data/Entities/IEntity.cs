@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Workshop.Web.Data.Entities
+﻿namespace Workshop.Web.Data.Entities
 {
     public interface IEntity
     {

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Workshop.Web.Data;
 using Workshop.Web.Data.Entities;
 using Workshop.Web.Helpers;
 using Workshop.Web.Models.ViewModels;
@@ -23,15 +23,17 @@ namespace Workshop.Web.Controllers
         readonly IConfiguration _configuration;
         readonly IImageHelper _imageHelper;
         readonly IMailHelper _mailHelper;
-        public AccountController (IUserHelper userHelper, IConfiguration configuration, IImageHelper imageHelper, IMailHelper mailHelper)
+        readonly IMechanicRepository _mechanicRepository;
+        public AccountController(IUserHelper userHelper, IConfiguration configuration, IImageHelper imageHelper, IMailHelper mailHelper, IMechanicRepository mechanicRepository)
         {
             _userHelper = userHelper;
             _configuration = configuration;
             _imageHelper = imageHelper;
             _mailHelper = mailHelper;
+            _mechanicRepository = mechanicRepository;
         }
 
-        public IActionResult Login ()
+        public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -42,7 +44,7 @@ namespace Workshop.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login (LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -69,12 +71,15 @@ namespace Workshop.Web.Controllers
 
         public IActionResult Register()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         public async Task<IActionResult> Profile()
         {
-
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             if (user == null)
             {
@@ -85,8 +90,12 @@ namespace Workshop.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register (RegisterUserViewModel model)
+        public async Task<IActionResult> Register(RegisterUserViewModel model)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
@@ -133,16 +142,23 @@ namespace Workshop.Web.Controllers
             return View(model);
         }
 
-        public IActionResult RegisterWorker ()
+        [Authorize(Roles = "Admin")]
+        public IActionResult RegisterWorker()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> RegisterWorker (RegisterWorkerViewModel model)
+        public async Task<IActionResult> RegisterWorker(RegisterWorkerViewModel model)
         {
             if (ModelState.IsValid)
             {
+                if (model.Type == "Mechanic" && (model.EnterTime == null || model.LeaveTime == null))
+                {
+                    ViewBag.Message = "Enter and leave times not specified!";
+                    return View(model);
+                }
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user == null)
                 {
@@ -167,6 +183,31 @@ namespace Workshop.Web.Controllers
                     var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
                     await _userHelper.ConfirmEmailAsync(user, token);
 
+                    if(model.Type == "Mechanic")
+                    {
+                        var mechanic = new Mechanic
+                        {
+                            EnterHour = TimeSpan.Parse(model.EnterTime).Hours,
+                            EnterMinute = TimeSpan.Parse(model.EnterTime).Minutes,
+                            LeaveHour = TimeSpan.Parse(model.LeaveTime).Hours,
+                            LeaveMinute = TimeSpan.Parse(model.LeaveTime).Minutes,
+                            User = user
+                        };
+
+                        await _mechanicRepository.CreateAsync(mechanic);
+                    }
+
+                    var passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                    var link = Url.Action(
+                        "ResetPassword",
+                        "Account",
+                        new { token = passwordToken, userId = user.Id }, protocol: HttpContext.Request.Scheme);
+
+                    Response response = _mailHelper.SendEmail(user.Email, "Password Reset Requested", "A password reset request was made, if it was you, you may click this <a href=\"" + link + "\">link</a> to reset your password." +
+                        "<br>" +
+                        "If it wasn't you, you can safely delete this message.");
+
                     ViewBag.Message = "Account successfully created!";
 
                     return View(model);
@@ -175,7 +216,8 @@ namespace Workshop.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> UpdateUser ()
+        [Authorize]
+        public async Task<IActionResult> UpdateUser()
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             var model = new ChangeUserViewModel();
@@ -188,8 +230,9 @@ namespace Workshop.Web.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UpdateUser (ChangeUserViewModel model)
+        public async Task<IActionResult> UpdateUser(ChangeUserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -219,13 +262,15 @@ namespace Workshop.Web.Controllers
             return View(model);
         }
 
-        public IActionResult ChangePassword ()
+        [Authorize]
+        public IActionResult ChangePassword()
         {
             return View();
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> ChangePassword (ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -235,7 +280,7 @@ namespace Workshop.Web.Controllers
                     var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("ChangeUser");
+                        return RedirectToAction("Profile");
                     }
                     else
                     {
@@ -252,7 +297,7 @@ namespace Workshop.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateToken ([FromBody] LoginViewModel model)
+        public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -300,13 +345,77 @@ namespace Workshop.Web.Controllers
                 return NotFound();
             }
 
-            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            await _userHelper.ConfirmEmailAsync(user, token);
 
-            if (!result.Succeeded)
+            return View();
+        }
+
+        public IActionResult RecoverPassword()
+        {
+            if (User.Identity.IsAuthenticated)
             {
-
+                return RedirectToAction("Index", "Home");
             }
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "There is no account registered with that email!");
+                    return View(model);
+                }
+
+                var token = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                var link = Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = token, userId = user.Id }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendEmail(model.Email, "Password Reset Requested", "A password reset request was made, if it was you, you may click this <a href=\"" + link + "\">link</a> to reset your password." +
+                    "<br>" +
+                    "If it wasn't you, you can safely delete this message.");
+
+                if (response.IsSuccess)
+                {
+                    ViewBag.Message = "Instructions have been sent to your email address!";
+                }
+            }
+            return View();
+        }
+
+        public IActionResult ResetPassword(string token, string userId)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByIdAsync(model.UserId);
+            if(user != null)
+            {
+                var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+
+                if (result.Succeeded)
+                {
+                    ViewBag.Message = "Your password has been successfully reset!";
+                    return View();
+                }
+                ViewBag.Message = "an unknown error has occurred!";
+                return View();
+            }
+            ViewBag.Message = "A valid user was not found!";
             return View();
         }
     }

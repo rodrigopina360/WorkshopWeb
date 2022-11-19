@@ -9,6 +9,7 @@ namespace Workshop.Web.Data
         public DbSet<Car> Cars { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Mechanic> Mechanics { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

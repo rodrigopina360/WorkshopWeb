@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,90 +32,23 @@ namespace Workshop.Web.Data
             await _userHelper.CheckRoleAsync("Mechanic");
             await _userHelper.CheckRoleAsync("Worker");
             await _userHelper.CheckRoleAsync("Client");
-            
 
-            var user = await _userHelper.GetUserByEmailAsync("rodrigooliveirapina@gmail.com");
-            if (user == null)
+            User user = null;
+
+            if (!_context.Users.Any())
             {
-                user = new User
-                {
-                    FirstName = "Rodrigo",
-                    LastName = "Pina",
-                    Email = "rodrigooliveirapina@gmail.com",
-                    UserName = "rodrigooliveirapina@gmail.com",
-                    PhoneNumber = "915775299",
-                    RegisterDate = DateTime.Now,
-                    ImagePath = "~/img/users/default.png"
-                };
-
-                var result = await _userHelper.AddUserAsync(user, "WorkShop2022.");
-
-                if (result != IdentityResult.Success)
-                {
-                    throw new InvalidOperationException("Could not create the user in seeder");
-                }
-
-                if (!_context.Mechanics.Any())
-                {
-                    _context.Mechanics.Add(new Mechanic
-                    {
-                        EnterHour = 9,
-                        EnterMinute = 30,
-                        LeaveHour = 19,
-                        LeaveMinute = 30,
-                        User = user
-                    });
-                }
-
-                await _userHelper.AddUserToRoleAsync(user, "Admin");
-                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                await _userHelper.ConfirmEmailAsync(user, token);
+                user = await AddUser("rodrigooliveirapina@gmail.com", "Rodrigo", "Pina", "915775299", "Admin");
+                await AddUser("pinossaur@gmail.com", "Pina", "Dinossauro", "915775299", "Mechanic");
+                await AddUser("andrepina@gmail.com", "Andre", "Pina", "915775299", "Worker");
             }
 
             List<Car> cars = new List<Car>();
-            cars.Add(new Car
-            {
-                Brand = "BMW",
-                Model = "i8",
-                Year = _random.Next(1990, DateTime.Now.Year),
-                LicensePlate = "12-AB-34",
-                ImagePath = "~/img/cars/default.png",
-                User = user
-            });
-            cars.Add(new Car
-            {
-                Brand = "Honda",
-                Model = "Civic",
-                Year = _random.Next(1990, DateTime.Now.Year),
-                LicensePlate = "21-BA-43",
-                ImagePath = "~/img/cars/default.png",
-                User = user
-            });
-            cars.Add(new Car
-            {
-                Brand = "Opel",
-                Model = "Corsa",
-                Year = _random.Next(1990, DateTime.Now.Year),
-                LicensePlate = "42-XZ-11",
-                ImagePath = "~/img/cars/default.png",
-                User = user
-            });
-            cars.Add(new Car
-            {
-                Brand = "Ford",
-                Model = "Focus",
-                Year = _random.Next(1990, DateTime.Now.Year),
-                LicensePlate = "99-FJ-61",
-                ImagePath = "~/img/cars/default.png",
-                User = user
-            });
-
             if (!_context.Cars.Any())
             {
-                foreach(Car car in cars)
-                {
-                    _context.Cars.Add(car);
-                }
+                cars.Add(AddCar("BMW", "i8", "12-AB-34", "~/img/cars/default.png", user));
+                cars.Add(AddCar("Honda", "Civic", "21-BA-43", "~/img/cars/default.png", user));
+                cars.Add(AddCar("Opel", "Corsa", "42-XZ-11", "~/img/cars/default.png", user));
+                cars.Add(AddCar("Ford", "Focus", "99-FJ-61", "~/img/cars/default.png", user));
             }
 
             if (!_context.Schedules.Any())
@@ -128,13 +62,72 @@ namespace Workshop.Web.Data
             await _context.SaveChangesAsync();
         }
 
+        async Task<User> AddUser(string email, string firstName, string lastName, string phoneNumber, string role)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = phoneNumber,
+                    RegisterDate = DateTime.Now,
+                    ImagePath = "~/img/users/default.png"
+                };
+
+                var result = await _userHelper.AddUserAsync(user, "WorkShop2022.");
+
+                if (result != IdentityResult.Success)
+                {
+                    throw new InvalidOperationException("Could not create the user in seeder");
+                }
+
+                await _userHelper.AddUserToRoleAsync(user, role);
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
+
+                if (role == "Mechanic")
+                {
+                    _context.Mechanics.Add(new Mechanic
+                    {
+                        EnterHour = 10,
+                        EnterMinute = 0,
+                        LeaveHour = 18,
+                        LeaveMinute = 0,
+                        User = user
+                    });
+                }
+                return user;
+            }
+            return null;
+        }
+
+        Car AddCar(string brand, string model, string licensePlate, string imagePath, User user)
+        {
+            Car car = new Car
+            {
+                Brand = brand,
+                Model = model,
+                Year = _random.Next(1990, DateTime.Now.Year),
+                LicensePlate = licensePlate,
+                ImagePath = imagePath,
+                User = user
+            };
+
+            _context.Cars.Add(car);
+
+            return car;
+        }
+
         void AddSchedule(string description, DateTime date, Car car)
         {
             _context.Schedules.Add(new Schedule
             {
-                Descripton = description,
+                Description = description,
                 StartDate = date,
-                EndDate = date.AddHours(16),
                 Car = car
             });
         }

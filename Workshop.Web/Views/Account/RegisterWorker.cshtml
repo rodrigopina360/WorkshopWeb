@@ -3,6 +3,8 @@
     ViewData["Title"] = "Register Worker";
 }
 
+<link rel="stylesheet" href="~/css/timepicker.css" />
+
 <h2>Register</h2>
 
 <div class="row">
@@ -36,10 +38,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="Type">Account Type</label>
-                <select name="Type" class="form-control">
+                <select name="Type" class="form-control" onchange="CheckMechanic(this.value)">
                     <option value="Mechanic">Mechanic</option>
                     <option value="Worker">Worker</option>
                 </select>
+            </div>
+            <div class="form-group" id="enter-date">
+                <label asp-for="EnterTime">Enter Time</label>
+                <input asp-for="EnterTime" class="form-control enter-clock" />
+            </div>
+            <div class="form-group" id="leave-date">
+                <label asp-for="LeaveTime">Leave Time</label>
+                <input asp-for="LeaveTime" class="form-control leave-clock" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Register New User" class="btn btn-success" />
@@ -57,7 +67,36 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    }
+    <script src="~/js/timepicker.js"></script>
+
+    <script>
+
+        $(".enter-clock").timepicker({
+          hourStep: 1,
+          minStep: 15,
+          minTime: "7:00",
+          maxTime: "23:00"
+        });
+
+        $(".leave-clock").timepicker({
+            hourStep: 1,
+            minStep: 15,
+        });
+
+        function CheckMechanic(value){
+            if(value == "Worker"){
+                document.getElementById("enter-date").style.display = "none";
+                document.getElementById("leave-date").style.display = "none";
+            }
+            else{
+                document.getElementById("enter-date").style.display = "block";
+                document.getElementById("leave-date").style.display = "block";
+            }
+        }
+
+    </script>
+    
+);
+
+
+}

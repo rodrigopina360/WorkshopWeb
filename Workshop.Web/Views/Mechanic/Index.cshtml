@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Workshop.Web.Data.Entities.Mechanic>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-3 mb-4">
+            <div class="card">
+                <img class="card-img-top" src=@Url.Content(item.User.ImagePath) />
+                <div class="card-body">
+                    <p class="card-text"><b>Name: </b> @item.User.FullName</p>
+                    <p class="card-text"><b>Enter Time: </b> @item.EnterTime</p>
+                    <p class="card-text"><b>Leave Time: </b> @item.LeaveTime</p>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

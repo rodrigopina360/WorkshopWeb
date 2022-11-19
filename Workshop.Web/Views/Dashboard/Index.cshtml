@@ -1,0 +1,226 @@
+﻿@model IEnumerable<Workshop.Web.Data.Entities.Mechanic>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+
+<h1>Dashboard</h1>
+
+<div id="calendar"></div>
+
+<div id="calendarModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="eventId"></p>
+                <p id="eventDescription"></p>
+                <p id="eventPrice"></p>
+                <p id="eventStartDate"></p>
+            </div>
+            <div class="modal-footer">
+                <a asp-controller="Car" asp-action="ViewCar" type="button" class="btn btn-primary">View Car</a>
+                <a class="btn btn-danger" onclick="CancelRepair()">Cancel Repair</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span>Confirm Appointment</span></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="eventId"></p>
+                <p><b>Mechanic</b></p>
+                <select id="eventMechanic" name="Mechanic" class="form-control">
+                    @foreach (var item in Model)
+                    {
+                        <option value="@item.User.Id">@item.User.FullName</option>
+                    }
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="ConfirmAppointment()">Yes</button>
+                <button type="button" data-dismiss="modal" class="btn btn-danger">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="finishModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span>Finish Appointment</span></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="eventId"></p>
+                <p id="eventCarId"></p>
+                <p><b>Appointment Description</b></p>
+                <input id="repairDescription" class="form-control" />
+                <p><b>Appointment Price</b></p>
+                <input id="repairPrice" class="form-control" />
+                <br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="FinishAppointment()">Confirm</button>
+                <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <script>
+
+        var calendar;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var calendarEl = document.getElementById("calendar");
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: "dayGridMonth",
+                eventClick: function (data){
+                    @if (User.IsInRole("Worker"))
+                    {
+                        <text>
+                            if (calendar.getEventById(data.event.id).backgroundColor == "red"){
+                                $("#confirmModal #eventId").empty().html(data.event.id);
+                                $("#confirmModal #eventId").hide();
+                                $("#confirmModal").modal();
+                            } 
+                        </text>
+                    }
+                    else if (User.IsInRole("Mechanic"))
+                    {
+                        <text>
+                            $("#finishModal #eventId").empty().html(data.event.id);
+                            $("#finishModal #eventId").hide();
+                            $("#finishModal #eventCarId").empty().html(data.event.extendedProps.carId);
+                            $("#finishModal #eventCarId").hide();
+                            $("#finishModal").modal();
+                        </text>
+                    }
+                    else{
+                        <text>
+                            $("#calendarModal #eventId").empty().html(data.event.id);
+                            $("#calendarModal #eventId").hide();
+                            $("#calendarModal #eventTitle").text(data.event.title);
+                            $("#calendarModal #eventDescription").empty().html("<b>Description: </b>" + data.event.extendedProps.description);
+                            $("#calendarModal #eventPrice").empty().html("<b>Price: </b>" + data.event.extendedProps.price + "€");
+                            $("#calendarModal #eventStartDate").empty().html(data.event.extendedProps.startDate);
+                            $("#calendarModal #eventStartDate").hide();
+                            $("#calendarModal").modal();
+                        </text>
+                    }
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                @if(User.IsInRole("Worker"))
+                {
+                    <text>
+                        url: "/API/Schedule/GetWorkerSchedules",
+                    </text>
+                }
+                else if(User.IsInRole("Mechanic"))
+                {
+                    <text>
+                        url: "/API/Schedule/GetMechanicSchedules",
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        url: "/API/Schedule/GetSchedules",
+                    </text>
+                }
+                data: JSON.stringify({ userEmail: "@User.Identity.Name" }),
+                contentType: "application/json;",
+                success: function(data){
+                    $.each(data, function (i, v){
+                        var color;
+                      
+                        if (v.isConfirmed) {
+                            color = "green";
+                        }
+                        else {
+                            color = "red";
+                        }
+                        debugger;
+                        calendar.addEvent({
+                            id: v.id,
+                            title: v.car.carName,
+                            carId: v.car.id,
+                            description: v.description,
+                            price: v.price,
+                            start: moment(v.startDate).format(),
+                            startDate: v.startDate,
+                            allDay: true,
+                            backgroundColor: color,
+                            borderColor: color,
+                        });
+                    })          
+                }
+            });
+            calendar.render();
+          
+        });
+
+        function CancelRepair() {
+            $.ajax({
+                type: "POST",
+                url: "/API/Schedule/RemoveSchedule",
+                data: JSON.stringify({ Id: $("#calendarModal #eventId").text() }),
+                contentType: "application/json;",
+                success: function () {
+                    calendar.getEventById($("#calendarModal #eventId")).remove();
+                    $("#calendarModal").modal("hide");
+                }
+            });
+        }
+
+        function ConfirmAppointment() {
+            $.ajax({
+                type: "POST",
+                url: "/API/Schedule/ConfirmSchedule",
+                data: JSON.stringify({ Id: $("#confirmModal #eventId").text(), UserId: $("#eventMechanic").val() }),
+                contentType: "application/json;",
+                success: function () {
+                    calendar.getEventById($("#confirmModal #eventId").text()).setProp("backgroundColor", "green");
+                    calendar.getEventById($("#confirmModal #eventId").text()).setProp("borderColor", "green");
+                    $("#confirmModal").modal("hide");
+                }
+            });
+        }
+
+        function FinishAppointment() {
+
+            $.ajax({
+                type: "POST",
+                url: "/API/Schedule/FinishSchedule",
+                data: JSON.stringify({ Id: $("#finishModal #eventId").text(), Description: $("#repairDescription").val(), Price: $("#repairPrice").val(), UserId: $("#eventCarId").val() }),
+                contentType: "application/json;",
+                success: function () {
+                    calendar.getEventById($("#finishModal #eventId").text()).remove();
+                    $("#finishModal").modal("hide");
+                }
+            });
+        }
+
+    </script>
+}
+
+

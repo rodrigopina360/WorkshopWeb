@@ -11,27 +11,33 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Workshop.Web</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Workshop</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        @if (User.Identity.IsAuthenticated)
+                        @if(User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Schedule" asp-action="Index">Dashboard</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
+                            @if(!User.IsInRole("Worker"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Car" asp-action="Index">Cars</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Car" asp-action="Index">Cars</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                         }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Mechanics</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Mechanic" asp-action="Index">Mechanics</a>
                         </li>
                         @if(User.IsInRole("Admin"))
                         {
@@ -41,6 +47,7 @@
                                     <h6 class="dropdown-header">Admin Options</h6>
                                     <div class="dropdown-divider"></div>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="RegisterWorker">Add a Worker</a></li>
+                                    <li><a class="dropdown-item" data-toggle="modal" data-target="#messageModal">Close Workshop</a></li>
                                 </ul>
                             </li>
                         }
@@ -71,6 +78,21 @@
         </main>
     </div>
 
+    <div id="messageModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span>Are you sure you want to alert all clients?</span></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="SendMessage()">Yes</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-danger">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2022 - Workshop.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -79,6 +101,20 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+
+        function SendMessage(){
+            $.ajax({
+                type: "POST",
+                url: "/API/Communication/CloseWorkshop",
+                contentType: "application/json;",
+                success: function () {
+
+                }
+            })
+        }
+
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

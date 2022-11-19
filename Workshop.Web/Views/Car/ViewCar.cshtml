@@ -1,0 +1,45 @@
+﻿@model Workshop.Web.Models.ViewModels.ViewCarViewModel
+@{
+    ViewData["Title"] = "View Car";
+}
+
+<h2>@Model.Name</h2>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <label asp-for="Brand"></label>
+            @Model.Brand
+        </div>
+        <div class="form-group">
+            <label asp-for="Model"></label>
+            @Model.Model
+        </div>
+        <div class="form-group">
+            <label asp-for="Year"></label>
+            @Model.Year
+        </div>
+        <div class="form-group">
+            <label asp-for="LicensePlate"></label>
+            @Model.LicensePlate
+        </div>
+        <div class="form-group">
+            <label asp-for="ImagePath"></label>
+            <img src="@Url.Content(Model.ImagePath)" alt="Image" style="width:300px;height:450px;max-width:100%;height:auto;" />
+        </div>
+        <b>Invoices</b>
+            @foreach(var item in Model.Invoice)
+            {
+                <div class="form-group">
+                    <label>Description</label>
+                    @item.Description
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    @item.Price€
+                </div>
+                <br />
+            }
+    </div>
+</div>
